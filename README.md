@@ -25,6 +25,17 @@ To install this project, follow these steps:
 
     node index.js
     node server.js
+## Example
+
+![](https://discord.aleu.xyz/user/739673575929282571)
+
+## Usage
+
+Join the [server](https://discord.gg/rwsHDTcZbe) to start tracking your activities.
+
+- `https://discord.aleu.xyz/user/:id`
+
+    - Show Discord profile
 
 ## Requirements
 
@@ -33,3 +44,5 @@ To install this project, follow these steps:
 ## License
 
 This project is licensed under the MIT license. see the [LICENSE](LICENSE) file for details.
+
+
