@@ -23,12 +23,8 @@ To install this project, follow these steps:
 
 ### Running the Bot and Server
 
-
-
-    ```bash
     node index.js
     node server.js
-    ```
 
 ## Requirements
 
