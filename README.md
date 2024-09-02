@@ -33,7 +33,7 @@ To install this project, follow these steps:
 
 Join the [server](https://discord.gg/rwsHDTcZbe) to start tracking your activities.
 
-- `https://discord.aleu.xyz/user/:id`
+- `https://discord.aleu.xyz/user/:id?theme={dark,light}`
 
     - Show Discord profile
 
