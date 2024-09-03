@@ -21,9 +21,25 @@ async function fetchAndConvertImage(url) {
         return await sharp(buffer).toFormat('png').toBuffer();
     } catch (error) {
         console.error('Error fetching or converting image:', error.message);
-        throw error;
+        throw error; 
     }
 }
+
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.arc(x + width - radius, y + radius, radius, 1.5 * Math.PI, 2 * Math.PI);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.arc(x + width - radius, y + height - radius, radius, 0, 0.5 * Math.PI);
+    ctx.lineTo(x + radius, y + height);
+    ctx.arc(x + radius, y + height - radius, radius, 0.5 * Math.PI, Math.PI);
+    ctx.lineTo(x, y + radius);
+    ctx.arc(x + radius, y + radius, radius, Math.PI, 1.5 * Math.PI);
+    ctx.closePath();
+    ctx.fill();
+}
+
 app.get('/', (req, res) => {
     res.send(`
         <html>
@@ -40,8 +56,10 @@ app.get('/', (req, res) => {
         </html>
     `);
 });
+
 app.get('/user/:id', async (req, res) => {
     const userId = req.params.id;
+    const theme = req.query.theme || 'dark'; 
 
     try {
         const users = JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
@@ -52,24 +70,33 @@ app.get('/user/:id', async (req, res) => {
         }
 
         const imgBuffer = await fetchAndConvertImage(user.avatar);
-        const logoBuffer = fs.readFileSync(LOGO_FILE);
+        const logoBuffer = fs.readFileSync(LOGO_FILE); 
 
-        const canvas = createCanvas(250, 100);
+        const canvas = createCanvas(250, 100); 
         const ctx = canvas.getContext('2d');
 
-        const gradient = ctx.createLinearGradient(0, 0, 250, 100);
-        gradient.addColorStop(0, '#1e2a38');
-        gradient.addColorStop(1, '#15202B');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, 250, 100);
+        let backgroundGradient, textColor;
+        if (theme === 'light') {
+            backgroundGradient = ctx.createLinearGradient(0, 0, 250, 100);
+            backgroundGradient.addColorStop(0, '#ffffff');
+            backgroundGradient.addColorStop(1, '#e4e4e4');
+            textColor = '#000';
+        } else {
+            backgroundGradient = ctx.createLinearGradient(0, 0, 250, 100);
+            backgroundGradient.addColorStop(0, '#1e2a38'); 
+            backgroundGradient.addColorStop(1, '#15202B');
+            textColor = '#fff'; 
+        }
 
+        ctx.fillStyle = backgroundGradient;
+        drawRoundedRect(ctx, 0, 0, 250, 100, 15);
         const profilePicSize = 80;
         const profilePicX = 10;
         const profilePicY = 50;
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(profilePicX + profilePicSize / 2, profilePicY, profilePicSize / 2 + 4, 0, Math.PI * 2); // Border radius
+        ctx.arc(profilePicX + profilePicSize / 2, profilePicY, profilePicSize / 2 + 4, 0, Math.PI * 2); 
 
         ctx.save();
         ctx.beginPath();
@@ -79,30 +106,46 @@ app.get('/user/:id', async (req, res) => {
         ctx.drawImage(imgObj, profilePicX, profilePicY - profilePicSize / 2, profilePicSize, profilePicSize);
         ctx.restore();
 
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 17px Montserrat';
+        ctx.fillStyle = textColor;
+        ctx.font = 'bold 19px Montserrat';
         ctx.textAlign = 'left';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowColor = theme === 'dark' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)';
         ctx.shadowOffsetX = 1;
         ctx.shadowOffsetY = 1;
         ctx.shadowBlur = 2;
-        ctx.fillText(user.username, profilePicX + profilePicSize + 15, profilePicY - 15);
+        ctx.fillText(user.displayName, profilePicX + profilePicSize + 15, profilePicY - 15);
         ctx.shadowColor = 'transparent';
 
-        let statusColor;
-        if (user.status === 'online') statusColor = '#3BA55A';
-        if (user.status === 'idle') statusColor = '#F9A41C';
-        if (user.status === 'dnd') statusColor = '#F0464B';
-        if (user.status === 'offline') statusColor = '#737E8D';
+
+        const statusBuffer = fs.readFileSync(`${__dirname}/status/${user.status}.png`);
+
+        const statusObj = await loadImage(statusBuffer);
+        const maxStatusSize = 25;
+        const statusWidth = statusObj.width;
+        const statusHeight = statusObj.height;
+        const statusAspectRatio = statusWidth / statusHeight;
+
+        let statusDrawWidth = maxStatusSize;
+        let statusDrawHeight = maxStatusSize;
+
+        if (statusWidth > statusHeight) {
+            statusDrawHeight = maxstatusSize / statusAspectRatio;
+        } else {
+            statusDrawWidth = maxStatusSize * statusAspectRatio;
+        }
+
+        const statusX = profilePicX + profilePicSize - 23; 
+        const statusY = 100 - statusDrawHeight - 10; 
+
+        ctx.drawImage(statusObj, statusX, statusY, statusDrawWidth, statusDrawHeight);
 
         ctx.font = 'bold 12px Montserrat';
-        ctx.fillStyle = statusColor;
-        const userStatus = user.status.charAt(0).toUpperCase() + user.status.slice(1);
-        ctx.fillText(userStatus || 'No status', profilePicX + profilePicSize + 15, profilePicY + 10);
+        ctx.fillStyle = `#737E8D`;
+        ctx.fillText(`@${user.globalName}`, profilePicX + profilePicSize + 15, profilePicY + 5);
 
         const logoObj = await loadImage(logoBuffer);
 
-        const maxLogoSize = 70;
+        const maxLogoSize = 20;
 
         const logoWidth = logoObj.width;
         const logoHeight = logoObj.height;
@@ -117,8 +160,8 @@ app.get('/user/:id', async (req, res) => {
             logoDrawWidth = maxLogoSize * aspectRatio;
         }
 
-        const logoX = 250 - logoDrawWidth - 10;
-        const logoY = 100 - logoDrawHeight - 2;
+        const logoX = 250 - logoDrawWidth - 15; 
+        const logoY = 100 - logoDrawHeight - 10; 
 
         ctx.drawImage(logoObj, logoX, logoY, logoDrawWidth, logoDrawHeight);
 
