@@ -41,17 +41,72 @@ function drawRoundedRect(ctx, x, y, width, height, radius) {
 }
 
 app.get('/', (req, res) => {
+    const users = JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
     res.send(`
         <html>
             <head>
                 <title>Join Our Server</title>
+                <style>
+                    body {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        background-color: #f4f4f4;
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                    }
+                    .container {
+                        text-align: center;
+                    }
+                    h1 {
+                        font-size: 2.5em;
+                        color: #333;
+                    }
+                    p {
+                        font-size: 1.2em;
+                        color: #555;
+                    }
+                    a {
+                        text-decoration: none;
+                        color: #fff;
+                        background-color: #7289DA;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        font-size: 1.1em;
+                        display: inline-block;
+                        margin-top: 20px;
+                    }
+                    .counter {
+                        font-size: 2em;
+                        color: #7289DA;
+                        margin-top: 10px;
+                    }
+                </style>
             </head>
-            <body style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4;">
-                <div style="text-align: center;">
+            <body>
+                <div class="container">
                     <h1>Welcome to Fila!</h1>
                     <p>Please join the server to start tracking your activities.</p>
-                    <a href="https://discord.gg/rwsHDTcZbe" style="text-decoration: none; color: #fff; background-color: #7289DA; padding: 10px 20px; border-radius: 5px;">Join the Server</a>
+                    <a href="https://discord.gg/rwsHDTcZbe">Join the Server</a>
+                    <p class="counter">Tracking <span id="userCount">0</span> users...</p>
                 </div>
+                <script>
+                let userCount = 0;
+                const maxUserCount = ${users.length}; 
+                const incrementStep = 100; 
+                const increment = () => {
+                    if (userCount < maxUserCount) {
+                        userCount += incrementStep;
+                        if (userCount > maxUserCount) {
+                            userCount = maxUserCount;
+                        }
+                        document.getElementById('userCount').textContent = userCount.toLocaleString();
+                        requestAnimationFrame(increment);
+                    }
+                };
+                increment();
+                </script>
             </body>
         </html>
     `);
