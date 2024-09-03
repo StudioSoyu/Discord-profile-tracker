@@ -134,6 +134,11 @@ app.get('/user/:id', async (req, res) => {
             statusDrawWidth = maxStatusSize * statusAspectRatio;
         }
 
+        ctx.beginPath();
+        ctx.arc(profilePicX + profilePicSize - 10.5, 100 - statusDrawHeight + 2.5, 13, 0, Math.PI * 2, true); 
+        ctx.fillStyle = 'white';
+        ctx.fill();
+
         const statusX = profilePicX + profilePicSize - 23; 
         const statusY = 100 - statusDrawHeight - 10; 
 
