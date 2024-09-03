@@ -33,17 +33,21 @@ async function fetchGuildMembers() {
     try {
         const guild = await client.guilds.fetch(GUILD_ID);
         const members = await guild.members.fetch();
-        const memberData = members.map((member) => ({
-            id: member.id,
-            username: member.user.username,
-            avatar: member.user.displayAvatarURL(),
-            status: member.presence ? member.presence.status : 'offline',
-        }));
+        const memberData = await Promise.all(
+            members.map(async (member) => {
+                return {
+                    id: member.id,
+                    globalName: member.user.username,
+                    displayName: member.user.displayName || member.user.username, // Using displayName fallback
+                    avatar: member.user.displayAvatarURL(),
+                    status: member.presence ? member.presence.status : 'offline',
+                };
+            })
+        );
         fs.writeFileSync(OUTPUT_FILE, JSON.stringify(memberData, null, 2));
         console.log('Member data updated');
     } catch (error) {
         console.error('Error fetching guild members:', error);
     }
 }
-
 client.login(TOKEN);
