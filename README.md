@@ -27,7 +27,7 @@ To install this project, follow these steps:
     node server.js
 ## Example
 
-![](https://discord.aleu.xyz/user/739673575929282571?theme=dark) ![](https://discord.aleu.xyz/user/739673575929282571?theme=light)
+![](https://discord.aleu.xyz/user/739673575929282571?theme=dark?v1) ![](https://discord.aleu.xyz/user/739673575929282571?theme=light?v1)
 
 ## Usage
 
