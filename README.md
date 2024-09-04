@@ -43,7 +43,7 @@ Join the [server](https://discord.gg/rwsHDTcZbe) to start tracking your activiti
 
 ## License
 
-This project is licensed under the MIT license. see the [LICENSE](LICENSE) file for details.
+This project is licensed under the license. see the [LICENSE](LICENSE) file for details.
 
 ## Special thanks
 [@mas05_](https://github.com/ingyu0413) - Design 
