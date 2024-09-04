@@ -27,13 +27,13 @@ To install this project, follow these steps:
     node server.js
 ## Example
 
-![](https://discord.aleu.xyz/user/739673575929282571?theme=dark?v1) ![](https://discord.aleu.xyz/user/739673575929282571?theme=light?)
+![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=dark) ![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=light)
 
 ## Usage
 
 Join the [server](https://discord.gg/rwsHDTcZbe) to start tracking your activities.
 
-- `https://discord.aleu.xyz/user/:id?theme={dark,light}`
+- `https://fila.aleu.xyz/discord/user/:id?theme={dark,light}`
 
     - Show Discord profile
 
