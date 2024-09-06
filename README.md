@@ -23,8 +23,8 @@ To install this project, follow these steps:
 
 ### Running the Bot and Server
 
-    node index.js
-    node server.js
+    ts-node index.ts
+    ts-node server.ts
 ## Example
 
 ![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=dark) ![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=light)
