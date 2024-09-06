@@ -40,6 +40,7 @@ Join the [server](https://discord.gg/rwsHDTcZbe) to start tracking your activiti
 ## Requirements
 
 -   **Node.js**
+-   **Typescript**
 
 ## License
 
