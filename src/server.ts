@@ -1,22 +1,27 @@
-import express, { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { createCanvas, loadImage, registerFont, CanvasRenderingContext2D } from 'canvas';
-import axios from 'axios';
-import sharp from 'sharp';
+import express, { Request, Response } from "express";
+import fs from "fs";
+import path from "path";
+import {
+    createCanvas,
+    loadImage,
+    registerFont,
+    CanvasRenderingContext2D,
+} from "canvas";
+import axios from "axios";
+import sharp from "sharp";
 
 const app = express();
 const PORT: number = 3002;
-const USERS_FILE: string = path.join(__dirname, 'users.json');
-const LOGO_FILE: string = path.join(__dirname, 'Discord-logo.png');
+const USERS_FILE: string = path.join(__dirname, "users.json");
+const LOGO_FILE: string = path.join(__dirname, "/public/Discord-logo.png");
 
-const FONT_PATH: string = path.join(__dirname, 'Montserrat-Bold.ttf');
-registerFont(FONT_PATH, { family: 'Montserrat' });
+const FONT_PATH: string = path.join(__dirname, "/public/Montserrat-Bold.ttf");
+registerFont(FONT_PATH, { family: "Montserrat" });
 
 async function fetchAndConvertImage(url: string): Promise<Buffer> {
-    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const response = await axios.get(url, { responseType: "arraybuffer" });
     const buffer: Buffer = Buffer.from(response.data);
-    return await sharp(buffer).toFormat('png').toBuffer();
+    return await sharp(buffer).toFormat("png").toBuffer();
 }
 
 function drawRoundedRect(
@@ -41,9 +46,14 @@ function drawRoundedRect(
     ctx.fill();
 }
 
-app.get('/', (req: Request, res: Response) => {
-    const users: Array<{ id: string; avatar: string; displayName: string; globalName: string; status: string }> =
-        JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
+app.get("/", (req: Request, res: Response) => {
+    const users: Array<{
+        id: string;
+        avatar: string;
+        displayName: string;
+        globalName: string;
+        status: string;
+    }> = JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
     res.send(`
         <html>
             <head>
@@ -120,37 +130,42 @@ app.get('/', (req: Request, res: Response) => {
     `);
 });
 
-app.get('/discord/user/:id', async (req: Request, res: Response) => {
+app.get("/discord/user/:id", async (req: Request, res: Response) => {
     const userId: string = req.params.id;
-    const theme = req.query.theme || 'dark';
+    const theme = req.query.theme || "dark";
 
     try {
-        const users: Array<{ id: string; avatar: string; displayName: string; globalName: string; status: string }> =
-            JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
+        const users: Array<{
+            id: string;
+            avatar: string;
+            displayName: string;
+            globalName: string;
+            status: string;
+        }> = JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
         const user = users.find((u) => u.id === userId);
 
         if (!user) {
-            return res.status(404).send('User not found');
+            return res.status(404).send("User not found");
         }
 
         const imgBuffer: Buffer = await fetchAndConvertImage(user.avatar);
         const logoBuffer: Buffer = fs.readFileSync(LOGO_FILE);
 
         const canvas = createCanvas(250, 100);
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
 
         let backgroundGradient: CanvasGradient;
         let textColor: string;
-        if (theme === 'light') {
+        if (theme === "light") {
             backgroundGradient = ctx.createLinearGradient(0, 0, 250, 100);
-            backgroundGradient.addColorStop(0, '#ffffff');
-            backgroundGradient.addColorStop(1, '#e4e4e4');
-            textColor = '#000';
+            backgroundGradient.addColorStop(0, "#ffffff");
+            backgroundGradient.addColorStop(1, "#e4e4e4");
+            textColor = "#000";
         } else {
             backgroundGradient = ctx.createLinearGradient(0, 0, 250, 100);
-            backgroundGradient.addColorStop(0, '#1e2a38');
-            backgroundGradient.addColorStop(1, '#15202B');
-            textColor = '#fff';
+            backgroundGradient.addColorStop(0, "#1e2a38");
+            backgroundGradient.addColorStop(1, "#15202B");
+            textColor = "#fff";
         }
 
         ctx.fillStyle = backgroundGradient;
@@ -162,27 +177,54 @@ app.get('/discord/user/:id', async (req: Request, res: Response) => {
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(profilePicX + profilePicSize / 2, profilePicY, profilePicSize / 2 + 4, 0, Math.PI * 2);
+        ctx.arc(
+            profilePicX + profilePicSize / 2,
+            profilePicY,
+            profilePicSize / 2 + 4,
+            0,
+            Math.PI * 2
+        );
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(profilePicX + profilePicSize / 2, profilePicY, profilePicSize / 2, 0, Math.PI * 2);
+        ctx.arc(
+            profilePicX + profilePicSize / 2,
+            profilePicY,
+            profilePicSize / 2,
+            0,
+            Math.PI * 2
+        );
         ctx.clip();
         const imgObj = await loadImage(imgBuffer);
-        ctx.drawImage(imgObj, profilePicX, profilePicY - profilePicSize / 2, profilePicSize, profilePicSize);
+        ctx.drawImage(
+            imgObj,
+            profilePicX,
+            profilePicY - profilePicSize / 2,
+            profilePicSize,
+            profilePicSize
+        );
         ctx.restore();
 
         ctx.fillStyle = textColor;
-        ctx.font = 'bold 19px Montserrat';
-        ctx.textAlign = 'left';
-        ctx.shadowColor = theme === 'dark' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)';
+        ctx.font = "bold 19px Montserrat";
+        ctx.textAlign = "left";
+        ctx.shadowColor =
+            theme === "dark"
+                ? "rgba(0, 0, 0, 0.5)"
+                : "rgba(255, 255, 255, 0.5)";
         ctx.shadowOffsetX = 1;
         ctx.shadowOffsetY = 1;
         ctx.shadowBlur = 2;
-        ctx.fillText(user.displayName, profilePicX + profilePicSize + 15, profilePicY - 15);
-        ctx.shadowColor = 'transparent';
+        ctx.fillText(
+            user.displayName,
+            profilePicX + profilePicSize + 15,
+            profilePicY - 15
+        );
+        ctx.shadowColor = "transparent";
 
-        const statusBuffer: Buffer = fs.readFileSync(`${__dirname}/status/${user.status}.png`);
+        const statusBuffer: Buffer = fs.readFileSync(
+            `${__dirname}/public/status/${user.status}.png`
+        );
         const statusObj = await loadImage(statusBuffer);
         const maxStatusSize: number = 25;
         const statusWidth: number = statusObj.width;
@@ -198,18 +240,35 @@ app.get('/discord/user/:id', async (req: Request, res: Response) => {
             statusDrawWidth = maxStatusSize * statusAspectRatio;
         }
         ctx.beginPath();
-        ctx.arc(profilePicX + profilePicSize - 10.5, 100 - statusDrawHeight + 2.5, 13, 0, Math.PI * 2, true);
-        ctx.fillStyle = 'white';
+        ctx.arc(
+            profilePicX + profilePicSize - 10.5,
+            100 - statusDrawHeight + 2.5,
+            13,
+            0,
+            Math.PI * 2,
+            true
+        );
+        ctx.fillStyle = "white";
         ctx.fill();
 
         const statusX: number = profilePicX + profilePicSize - 23;
         const statusY: number = 100 - statusDrawHeight - 10;
 
-        ctx.drawImage(statusObj, statusX, statusY, statusDrawWidth, statusDrawHeight);
+        ctx.drawImage(
+            statusObj,
+            statusX,
+            statusY,
+            statusDrawWidth,
+            statusDrawHeight
+        );
 
-        ctx.font = 'bold 12px Montserrat';
+        ctx.font = "bold 12px Montserrat";
         ctx.fillStyle = `#737E8D`;
-        ctx.fillText(`@${user.globalName}`, profilePicX + profilePicSize + 15, profilePicY + 5);
+        ctx.fillText(
+            `@${user.globalName}`,
+            profilePicX + profilePicSize + 15,
+            profilePicY + 5
+        );
 
         const logoObj = await loadImage(logoBuffer);
         const maxLogoSize: number = 20;
@@ -232,13 +291,13 @@ app.get('/discord/user/:id', async (req: Request, res: Response) => {
 
         ctx.drawImage(logoObj, logoX, logoY, logoDrawWidth, logoDrawHeight);
 
-        res.set('Content-Type', 'image/png');
-        const buffer = canvas.toBuffer('image/png');
-        res.set('Content-Type', 'image/png');
+        res.set("Content-Type", "image/png");
+        const buffer = canvas.toBuffer("image/png");
+        res.set("Content-Type", "image/png");
         res.end(buffer);
     } catch (error) {
-        console.error('Error generating image:', error);
-        res.status(500).send('Internal server error');
+        console.error("Error generating image:", error);
+        res.status(500).send("Internal server error");
     }
 });
 
