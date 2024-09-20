@@ -55,78 +55,107 @@ app.get("/", (req: Request, res: Response) => {
         status: string;
     }> = JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
     res.send(`
-        <html>
-            <head>
-                <title>Join Our Server</title>
-                <meta property="og:title" content="Fila" />
-                <meta property="og:description" content="Tracking your discord profile" />
-                <meta property="og:url" content="https://fila.aleu.xyz/" />
-                <meta property="og:type" content="website" />
-                <style>
-                    body {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 100vh;
-                        background-color: #f4f4f4;
-                        font-family: Arial, sans-serif;
-                        margin: 0;
-                    }
-                    .container {
-                        text-align: center;
-                    }
-                    h1 {
-                        font-size: 2.5em;
-                        color: #333;
-                    }
-                    p {
-                        font-size: 1.2em;
-                        color: #555;
-                    }
-                    a {
-                        text-decoration: none;
-                        color: #fff;
-                        background-color: #7289DA;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        font-size: 1.1em;
-                        display: inline-block;
-                        margin-top: 20px;
-                    }
-                    .counter {
-                        font-size: 2em;
-                        color: #7289DA;
-                        margin-top: 10px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>Welcome to Fila!</h1>
-                    <p>Please join the server to start tracking your activities.</p>
-                    <a href="https://discord.gg/rwsHDTcZbe">Join the Server</a>
-                    <a href="https://github.com/Aleu0091/Discord-profile-tracker">Github</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Our Server</title>
+    <meta property="og:title" content="Fila" />
+    <meta property="og:description" content="Tracking your Discord profile" />
+    <meta property="og:url" content="https://fila.aleu.xyz/" />
+    <meta property="og:type" content="website" />
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #f4f4f4, #e9e9e9);
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin: 0 0 10px;
+        }
+        p {
+            font-size: 1.1em;
+            color: #555;
+        }
+        a {
+            text-decoration: none;
+            color: #fff;
+            background-color: #7289DA;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1.1em;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        a:hover {
+            background-color: #5B6EAE;
+        }
+        .counter {
+            font-size: 2em;
+            color: #7289DA;
+            margin-top: 15px;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            p {
+                font-size: 1em;
+            }
+            a {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+            .counter {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Fila!</h1>
+        <p>Please join the server to start tracking your activities.</p>
+        <a href="https://discord.gg/rwsHDTcZbe">Join the Server</a>
+        <a href="https://github.com/Aleu0091/Discord-profile-tracker">GitHub</a>
+        <p class="counter">Tracking <span id="userCount">0</span> users...</p>
+    </div>
+    <script>
+        let userCount = 0;
+        const maxUserCount = ${users.length}; 
+        const incrementStep = 100; 
+        const increment = () => {
+            if (userCount < maxUserCount) {
+                userCount += incrementStep;
+                if (userCount > maxUserCount) {
+                    userCount = maxUserCount;
+                }
+                document.getElementById('userCount').textContent = userCount.toLocaleString();
+                requestAnimationFrame(increment);
+            }
+        };
+        increment();
+    </script>
+</body>
+</html>
 
-                    <p class="counter">Tracking <span id="userCount">0</span> users...</p>
-                </div>
-                <script>
-                let userCount = 0;
-                const maxUserCount = ${users.length}; 
-                const incrementStep = 100; 
-                const increment = () => {
-                    if (userCount < maxUserCount) {
-                        userCount += incrementStep;
-                        if (userCount > maxUserCount) {
-                            userCount = maxUserCount;
-                        }
-                        document.getElementById('userCount').textContent = userCount.toLocaleString();
-                        requestAnimationFrame(increment);
-                    }
-                };
-                increment();
-                </script>
-            </body>
-        </html>
     `);
 });
 
