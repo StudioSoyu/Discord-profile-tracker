@@ -162,7 +162,13 @@ app.get("/", (req: Request, res: Response) => {
 app.get("/discord/user/:id", async (req: Request, res: Response) => {
     const userId: string = req.params.id;
     const theme = req.query.theme || "dark";
-
+    res.set(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
+    );
+    res.set("Expires", "0");
+    res.set("Pragma", "no-cache");
+    res.set("Surrogate-Control", "no-store");
     try {
         const users: Array<{
             id: string;
