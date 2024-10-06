@@ -27,7 +27,7 @@ To install this project, follow these steps:
     ts-node server.ts
 ## Example
 
-![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=dark?v2) ![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=light&&v2)
+![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=dark) ![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=light)
 
 ## Usage
 
