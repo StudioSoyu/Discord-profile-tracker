@@ -27,13 +27,13 @@ To install this project, follow these steps:
     ts-node server.ts
 ## Example
 
-![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=dark) ![](https://fila.aleu.xyz/discord/user/739673575929282571?theme=light)
+![](https://fila.studiosoyu.com/discord/user/739673575929282571?theme=dark) ![](https://fila.studiosoyu.com/discord/user/739673575929282571?theme=light)
 
 ## Usage
 
 Join the [server](https://discord.gg/rwsHDTcZbe) to start tracking your activities.
 
-- `https://fila.aleu.xyz/discord/user/:id?theme={dark,light}`
+- `https://fila.studiosoyu.com/discord/user/:id?theme={dark,light}`
 
     - Show Discord profile
 
